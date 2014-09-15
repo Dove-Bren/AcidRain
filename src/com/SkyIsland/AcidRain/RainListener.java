@@ -30,7 +30,7 @@ public class RainListener implements Listener {
 	public RainListener(AcidRainPlugin plugin, List<String> worlds) {
 		this.plugin = plugin;
 		this.worlds = worlds;
-		this.timer = new Timer(plugin, fireEvent, 40, 40); //runs every 2 seconds
+		this.timer = new Timer(this.plugin, fireEvent, 40, 40); //runs every 2 seconds
 	}
 	
 	@EventHandler

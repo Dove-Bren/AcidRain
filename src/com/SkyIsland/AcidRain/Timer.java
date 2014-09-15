@@ -10,6 +10,9 @@ public class Timer {
 	
 	public Timer(AcidRainPlugin plugin, BukkitRunnable task, long delay, long period) {
 		this.task = task;
+		this.plugin = plugin;
+		this.delay = delay;
+		this.period = period;
 		start();
 	}
 	
