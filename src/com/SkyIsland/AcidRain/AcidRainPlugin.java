@@ -3,6 +3,7 @@ package com.SkyIsland.AcidRain;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.LinkedList;
 
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -12,6 +13,7 @@ public class AcidRainPlugin extends JavaPlugin {
 	
 	private YamlConfiguration config;
 	private static final double version = 0.01;
+	private RainListener rainls;
 	
 	public void onLoad() {
 		checkConfig(new File(getDataFolder(), "config.yml"));
@@ -19,6 +21,9 @@ public class AcidRainPlugin extends JavaPlugin {
 	
 	public void onEnable() {
 		config = load(new File(getDataFolder(), "config.yml"));
+		rainls = new RainListener(this, config.getStringList("worlds"));
+		
+		getServer().getPluginManager().registerEvents(rainls, this);
 	}
 	
 	private void checkConfig(File configFile) {
@@ -30,7 +35,8 @@ public class AcidRainPlugin extends JavaPlugin {
 		//Now we set up the default config that we're going to create.
 		YamlConfiguration defaultConfig = new YamlConfiguration();
 		defaultConfig.set("version", 0.01);
-		defaultConfig.set("worlds", "Wilderness");
+		defaultConfig.set("worlds", new LinkedList<String>().add("Wilderness"));
+		
 		
 		//finally, we save this out to file.
 		try {
