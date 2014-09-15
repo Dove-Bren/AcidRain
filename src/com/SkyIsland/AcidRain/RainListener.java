@@ -3,10 +3,14 @@ package com.SkyIsland.AcidRain;
 import java.util.List;
 
 import org.bukkit.Bukkit;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.event.world.WorldUnloadEvent;
+import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 public class RainListener implements Listener {
@@ -31,7 +35,18 @@ public class RainListener implements Listener {
 	
 	@EventHandler
 	public void rainEvent(CheckRainEvent event) {
+		PotionEffect frostbite = new PotionEffect(PotionEffectType.POISON, 100, 1); //poison 1 for 5 seconds
 		
+		for (String worldName : worlds) {
+			World world = Bukkit.getWorld(worldName);
+			for (Player player : world.getPlayers()) {
+				if (player.getLocation().getBlock().getLightFromSky() == 15) {
+					//outside
+					player.addPotionEffect(frostbite);
+				}
+			}
+				
+		}
 	}
 	
 	@EventHandler
