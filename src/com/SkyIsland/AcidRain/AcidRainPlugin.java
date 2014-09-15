@@ -12,7 +12,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class AcidRainPlugin extends JavaPlugin {
 	
 	private YamlConfiguration config;
-	private static final double version = 0.01;
+	private static final double version = 0.02;
 	private RainListener rainls;
 	
 	public void onLoad() {
@@ -34,8 +34,10 @@ public class AcidRainPlugin extends JavaPlugin {
 				
 		//Now we set up the default config that we're going to create.
 		YamlConfiguration defaultConfig = new YamlConfiguration();
-		defaultConfig.set("version", 0.01);
-		defaultConfig.set("worlds", new LinkedList<String>().add("Wilderness"));
+		LinkedList<String> worldList = new LinkedList<String>();
+		worldList.add("Wilderness");
+		defaultConfig.set("version", version);
+		defaultConfig.set("worlds", worldList);
 		
 		
 		//finally, we save this out to file.

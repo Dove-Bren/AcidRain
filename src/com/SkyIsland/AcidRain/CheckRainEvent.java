@@ -12,4 +12,7 @@ public class CheckRainEvent extends Event{
 		return handlers;
 	}
 	
+	public static HandlerList getHandlerList() {
+		return handlers;
+	}
 }
