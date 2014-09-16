@@ -3,7 +3,7 @@ package com.SkyIsland.AcidRain.Events;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-public class StartRainEvent extends Event{
+public class ToggleRainEvent extends Event{
 	
 	private static final HandlerList handlers = new HandlerList();
 		
