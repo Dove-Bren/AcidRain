@@ -9,8 +9,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.weather.WeatherChangeEvent;
-import org.bukkit.event.world.WorldLoadEvent;
-import org.bukkit.event.world.WorldUnloadEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -55,16 +53,6 @@ public class RainListener implements Listener {
 			}
 				
 		}
-	}
-	
-	@EventHandler
-	public void emptyWorld(WorldUnloadEvent event) {
-		timer.stop();
-	}
-	
-	@EventHandler
-	public void fillWorld(WorldLoadEvent event) {
-		timer.start();		
 	}
 	
 	@EventHandler
