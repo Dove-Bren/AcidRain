@@ -12,7 +12,7 @@ public class AcidRainPlugin extends JavaPlugin {
 	
 	private YamlConfiguration config;
 	private static final double version = 0.02;
-	private RainListener rainls;
+	private RainListener rainListener;
 	private final String configFilename = "config.yml";
 	
 	public void onLoad() {
@@ -21,9 +21,9 @@ public class AcidRainPlugin extends JavaPlugin {
 	
 	public void onEnable() {
 		config = load(new File(getDataFolder(), configFilename));
-		rainls = new RainListener(this, config.getStringList("worlds"));
+		rainListener = new RainListener(this, config.getStringList("worlds"));
 		
-		getServer().getPluginManager().registerEvents(rainls, this);
+		getServer().getPluginManager().registerEvents(rainListener, this);
 	}
 	
 	private void checkConfig(File configFile) {
