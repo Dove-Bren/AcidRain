@@ -12,7 +12,6 @@ import org.bukkit.event.weather.WeatherChangeEvent;
 import org.bukkit.potion.PotionEffect;
 import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
-
 import com.SkyIsland.AcidRain.Timer.TimerType;
 import com.SkyIsland.AcidRain.Events.CheckRainEvent;
 import com.SkyIsland.AcidRain.Events.StartRainEvent;
