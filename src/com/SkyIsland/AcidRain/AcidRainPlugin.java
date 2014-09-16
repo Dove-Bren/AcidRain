@@ -1,7 +1,6 @@
 package com.SkyIsland.AcidRain;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.LinkedList;
 
@@ -14,13 +13,14 @@ public class AcidRainPlugin extends JavaPlugin {
 	private YamlConfiguration config;
 	private static final double version = 0.02;
 	private RainListener rainls;
+	private final String configFilename = "config.yml";
 	
 	public void onLoad() {
-		checkConfig(new File(getDataFolder(), "config.yml"));
+		checkConfig(new File(getDataFolder(), configFilename));
 	}
 	
 	public void onEnable() {
-		config = load(new File(getDataFolder(), "config.yml"));
+		config = load(new File(getDataFolder(), configFilename));
 		rainls = new RainListener(this, config.getStringList("worlds"));
 		
 		getServer().getPluginManager().registerEvents(rainls, this);
@@ -62,14 +62,9 @@ public class AcidRainPlugin extends JavaPlugin {
 		
 		try {
 			config.load(configFile);
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (InvalidConfigurationException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
