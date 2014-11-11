@@ -125,6 +125,8 @@ public class RainListener implements Listener {
 	
 	@EventHandler
 	public void rainChange(WeatherChangeEvent event) {
+		if (!event.isCancelled())
+		if (event.getWorld().getName().equals(this.world.getName()))
 		if (event.toWeatherState()) {
 			//starting to rain
 			
