@@ -1,4 +1,8 @@
 name: AcidRain
 main: com.SkyIsland.AcidRain.AcidRainPlugin
 version: 0.1
-softdepend:
+softdepend: [Multiverse]
+commands:
+    acidstate:
+        description: Return the state of the rain
+        usage: /acidstate

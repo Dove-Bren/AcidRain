@@ -3,11 +3,13 @@ package com.SkyIsland.AcidRain;
 import java.io.File;
 import java.io.IOException;
 
-import org.bukkit.Bukkit;
-import org.bukkit.World;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import com.onarandombox.MultiverseCore.api.MultiversePlugin;
 
 public class AcidRainPlugin extends JavaPlugin {
 	
@@ -15,15 +17,23 @@ public class AcidRainPlugin extends JavaPlugin {
 	private static final double version = 0.10;
 	private RainListener rainListener;
 	private final String configFilename = "config.yml";
+	private MultiversePlugin mvplugin;
 	
 	public void onLoad() {
 		checkConfig(new File(getDataFolder(), configFilename));
 	}
 	
 	public void onEnable() {
+		
+		if (mvplugin == null) {
+			System.out.println("error finding multiverse!");
+		}
+		
 		config = load(new File(getDataFolder(), configFilename));
-		World world = Bukkit.getWorld(config.getString("world","world"));
-		rainListener = new RainListener(this, world);
+		
+		System.out.println("Worlds: " + config.getString("worlds", "Wilderness"));
+		
+		rainListener = new RainListener(this, config.getString("worlds", "Wilderness"));
 		
 		getServer().getPluginManager().registerEvents(rainListener, this);
 	}
@@ -51,6 +61,14 @@ public class AcidRainPlugin extends JavaPlugin {
 		
 		
 		
+	}
+	
+	public boolean onCommand(CommandSender sender, Command cmd, String label, String[] args){
+		if (cmd.getName().equalsIgnoreCase("acidstate")) {
+			sender.sendMessage("state: " + rainListener.getState());
+			return true;
+		}
+		return false;
 	}
 	
 	private YamlConfiguration load(File configFile) {

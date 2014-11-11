@@ -1,6 +1,8 @@
 package com.SkyIsland.AcidRain;
 
 
+import java.util.ConcurrentModificationException;
+import java.util.Iterator;
 import java.util.Random;
 
 import org.bukkit.Bukkit;
@@ -15,6 +17,7 @@ import org.bukkit.potion.PotionEffectType;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import com.SkyIsland.AcidRain.Events.CheckRainEvent;
+import com.SkyIsland.AcidRain.Events.CheckWorldEvent;
 import com.SkyIsland.AcidRain.Events.StartRainEvent;
 import com.SkyIsland.AcidRain.Events.ToggleRainEvent;
 
@@ -22,6 +25,7 @@ public class RainListener implements Listener {
 	
 	private AcidRainPlugin plugin;
 	private World world;
+	private String worldName;
 	
 	/**
 	 * Describes the state of the rain. 
@@ -55,24 +59,37 @@ public class RainListener implements Listener {
 			Bukkit.getServer().getPluginManager().callEvent(new ToggleRainEvent());
 		}
 	};
+	private static BukkitRunnable checkWorld = new BukkitRunnable() {
+		@Override
+		public void run() {
+			Bukkit.getServer().getPluginManager().callEvent(new CheckWorldEvent());
+		}
+	};
 	
 	
-	public RainListener(AcidRainPlugin plugin, World world) {
+	public RainListener(AcidRainPlugin plugin, String worldName) {
 		this.plugin = plugin;
-		this.world = world;
+		this.worldName = worldName;
 		rand = new Random();
-		world.setStorm(false);
 		
-		Timer timer = new Timer(toggleDownfall, rand.nextInt(2) * 300); //timer for 1 or 2 seconds that starts the rain
-		timer.start();
+		this.world = plugin.getServer().getWorld(worldName);
 		
 		if (this.world == null) {
-			plugin.getLogger().info("Failed to load world correct! Make sure it exists: \"" + this.world.getName() + "\"");
-			throw new NullPointerException();
+			plugin.getLogger().info("World " + worldName + " doesn't seem to exist. This listener will wait until it does...");
+			Timer timer = new Timer(checkWorld, 50);
+			timer.start();
+			return;
+			
 		}
+		world.setStorm(false);
+		Timer timer = new Timer(toggleDownfall, (rand.nextInt(2)+1) * 300); //timer for 1 or 2 minutes that starts the rain
+		timer.start();
+	
 	}
 
-	
+	public int getState() {
+		return this.state;
+	}
 	
 	
 	
@@ -85,12 +102,19 @@ public class RainListener implements Listener {
 			//we only want this to happen if it's raining
 		}
 		PotionEffect frostbite = new PotionEffect(PotionEffectType.POISON, 100, 1); //poison 1 for 5 seconds
-		for (Player player : world.getPlayers()) {
-			if (player.getWorld().hasStorm())
-			if (player.getLocation().getBlock().getLightFromSky() == 15) {
-				//outside
-				player.addPotionEffect(frostbite);
+		try {
+			for (Iterator<Player> playerlist = world.getPlayers().iterator(); playerlist.hasNext(); ) {
+				Player player = playerlist.next();
+			
+				if (player.getWorld().hasStorm())
+					if (player.getLocation().getBlock().getLightFromSky() == 15) {
+						//outside
+						player.addPotionEffect(frostbite);
+					}
 			}
+		}
+		catch (ConcurrentModificationException e) {
+			plugin.getLogger().info("Concurrent modification error when trying to check players in the rain. Event aborted.");
 		}
 		
 		//reset the timer to wait
@@ -111,7 +135,7 @@ public class RainListener implements Listener {
 				timer.start();
 				
 				//We also want a timer to turn the rain off in a certain amount of time
-				timer = new Timer(toggleDownfall, rand.nextInt(4) * 300); //set the timer to 1-4 seconds
+				timer = new Timer(toggleDownfall, (rand.nextInt(4)+1) * 300); //set the timer to 1-4 seconds
 				timer.start();
 				return;
 			}
@@ -132,7 +156,7 @@ public class RainListener implements Listener {
 		else {
 			//weather is turning off.
 			state = 0;
-			Timer timer = new Timer(toggleDownfall, rand.nextInt(2) * 300);
+			Timer timer = new Timer(toggleDownfall, (rand.nextInt(4)+1) * 150);
 			timer.start(); //starts the timer is 1 or 2 seconds
 		}
 	}
@@ -146,12 +170,12 @@ public class RainListener implements Listener {
 	
 	@EventHandler
 	public void toggleRain(ToggleRainEvent event) {
-		if (state == 3) {
+		if (state == 2) {
 			//it's raining and we want to stop that.
 			world.setStorm(false);
 			return;
 		}
-		else {
+		else if (state == 0) {
 			//it's not currently raining. We want to change that.
 			world.setStorm(true);
 		}
@@ -167,6 +191,21 @@ public class RainListener implements Listener {
 
 	public AcidRainPlugin getPlugin() {
 		return plugin;
+	}
+	
+	@EventHandler
+	public void checkWorld(CheckWorldEvent event) {
+		this.world = plugin.getServer().getWorld(worldName);
+		if  (world == null) {
+			plugin.getLogger().info("World " + worldName + " doesn't seem to exist. This listener will wait until it does...");
+			Timer timer = new Timer(checkWorld, 50);
+			timer.start();
+			return;			
+		}
+		world.setStorm(false);
+		
+		Timer timer = new Timer(toggleDownfall, (rand.nextInt(2)+1) * 300); //timer for 1 or 2 minutes that starts the rain
+		timer.start();
 	}
 	
 	
